@@ -40,13 +40,7 @@ namespace OptikaKargin
             string login = Properties.Settings.Default.login;
             string password = Properties.Settings.Default.password;
 
-
-            if ( login == "admin" && password == "admin")
-            {
-                RecoveryAdmin form = new RecoveryAdmin();
-                form.ShowDialog();
-                this.Close();
-            }
+           
             // Проверка на пустые поля
             if (UserLogin.Length == 0 || UserPassword.Length == 0)
             {
@@ -85,6 +79,14 @@ namespace OptikaKargin
                                     : new FormManager();
                                 nextForm.Show();
                                 this.Hide(); // Скрываем форму авторизации
+                            }
+                            else if (login == "admin" && password == "admin")
+                            {
+                                RecoveryAdmin form = new RecoveryAdmin();
+                                form.Show();
+                                Hide();
+
+                                return;
                             }
                             else // Если пользователь не найден
                             {

@@ -105,5 +105,12 @@ namespace OptikaKargin
             FormRole form = new FormRole(); // Создаем форму ролей
             form.ShowDialog(); // Открываем форму в модальном режиме
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            RecoveryAndImport form = new RecoveryAndImport(); // Создаем форму ролей
+            form.Show();
+            Hide();// Открываем форму в модальном режиме
+        }
     }
 }

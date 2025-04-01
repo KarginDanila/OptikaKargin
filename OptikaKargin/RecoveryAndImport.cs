@@ -10,18 +10,18 @@ using System.Windows.Forms;
 
 namespace OptikaKargin
 {
-    public partial class RecoveryAdmin : Form
+    public partial class RecoveryAndImport : Form
     {
-        public RecoveryAdmin()
+        public RecoveryAndImport()
         {
             InitializeComponent();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            Avtorization form = new Avtorization(); // Создаем форму авторизации
+            FormAdmin form = new FormAdmin();
             form.Show();
-            this.Close();
+            Hide();
         }
     }
 }
