@@ -99,10 +99,11 @@ namespace OptikaKargin
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button3.Location = new System.Drawing.Point(341, 254);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(130, 37);
+            this.button3.Size = new System.Drawing.Size(141, 37);
             this.button3.TabIndex = 5;
             this.button3.Text = "обзор";
             this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // comboBox1
             // 
@@ -111,6 +112,7 @@ namespace OptikaKargin
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(207, 39);
             this.comboBox1.TabIndex = 6;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // button4
             // 
