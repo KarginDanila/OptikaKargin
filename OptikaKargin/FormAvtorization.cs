@@ -37,6 +37,16 @@ namespace OptikaKargin
             string UserLogin = textBoxLogin.Text.Trim();
             string UserPassword = textBoxPassword.Text.Trim();
 
+            string login = Properties.Settings.Default.login;
+            string password = Properties.Settings.Default.password;
+
+
+            if ( login == "admin" && password == "admin")
+            {
+                RecoveryAdmin form = new RecoveryAdmin();
+                form.ShowDialog();
+                this.Close();
+            }
             // Проверка на пустые поля
             if (UserLogin.Length == 0 || UserPassword.Length == 0)
             {
