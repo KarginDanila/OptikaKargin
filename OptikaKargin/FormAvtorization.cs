@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using System.Drawing.Drawing2D;
+using System.Drawing;
 
 namespace OptikaKargin
 {
@@ -27,6 +29,7 @@ namespace OptikaKargin
 
         // Строка подключения к базе данных
         string conn = Connection.myConnection;
+        private string captchaText;
 
         /// <summary>
         /// Обработчик кнопки входа в систему
@@ -93,6 +96,7 @@ namespace OptikaKargin
                                 textBoxLogin.Clear();
                                 textBoxPassword.Clear();
                             }
+                            Captha();
                         }
                     }
                 }
@@ -110,7 +114,53 @@ namespace OptikaKargin
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        private void Captha()
+        {
+            CaptchaTo();
+            button2.Visible = true;
+            pictureBox2.Visible = true;
+            textBox3.Visible = true;
+            button1.Enabled = false;
+            pictureBox1.Enabled = false;
+            textBoxLogin.Enabled = false;
+            textBoxPassword.Enabled = false;
+            textBoxLogin.Text = null;
+            textBoxPassword.Text = null;
+            this.Width = 642;
+        }
+        private void CaptchaTo()
+        {
+            Random random = new Random();
+            string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            captchaText = "";
+            for (int i = 0; i < 5; i++)
+            {
+                captchaText += chars[random.Next(chars.Length)];
+            }
+            Bitmap bmp = new Bitmap(pictureBox2.Width, pictureBox2.Height);
+            Graphics graphics = Graphics.FromImage(bmp);
+            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            graphics.Clear(Color.White);
+            Font font = new Font("Arial", 20, FontStyle.Bold);
+            for (int i = 0; i < 5; i++)
+            {
+                PointF point = new PointF(i * 20, 0);
+                graphics.TranslateTransform(10, 10);
+                graphics.RotateTransform(random.Next(-10, 10));
+                graphics.DrawString(captchaText[i].ToString(), font, Brushes.Black, point);
+                graphics.ResetTransform();
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                Pen pen = new Pen(Color.Black, random.Next(2, 5));
+                int x1 = random.Next(pictureBox2.Width);
+                int y1 = random.Next(pictureBox2.Height);
+                int x2 = random.Next(pictureBox2.Width);
+                int y2 = random.Next(pictureBox2.Height);
+                graphics.DrawLine(pen, x1, y1, x2, y2);
+            }
+            pictureBox2.Image = bmp;
+        }
         /// <summary>
         /// Хеширование пароля с использованием SHA256
         /// </summary>
