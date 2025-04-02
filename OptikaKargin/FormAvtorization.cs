@@ -37,10 +37,6 @@ namespace OptikaKargin
             string UserLogin = textBoxLogin.Text.Trim();
             string UserPassword = textBoxPassword.Text.Trim();
 
-            string login = Properties.Settings.Default.login;
-            string password = Properties.Settings.Default.password;
-
-           
             // Проверка на пустые поля
             if (UserLogin.Length == 0 || UserPassword.Length == 0)
             {
@@ -53,7 +49,7 @@ namespace OptikaKargin
             string hashedPass = HashPassword(UserPassword);
 
             try
-            {
+            {        
                 using (MySqlConnection con = new MySqlConnection(conn))
                 {
                     con.Open();
@@ -80,7 +76,7 @@ namespace OptikaKargin
                                 nextForm.Show();
                                 this.Hide(); // Скрываем форму авторизации
                             }
-                            else if (login == "admin" && password == "admin")
+                            else if (Properties.Settings.Default.login == textBoxLogin.Text && Properties.Settings.Default.password == textBoxPassword.Text)
                             {
                                 RecoveryAdmin form = new RecoveryAdmin();
                                 form.Show();

@@ -22,7 +22,6 @@ namespace OptikaKargin
         }
 
         #region Windows Form Designer generated code
-
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
@@ -50,6 +49,7 @@ namespace OptikaKargin
             this.button1.TabIndex = 0;
             this.button1.Text = "Восстановить";
             this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
@@ -61,6 +61,7 @@ namespace OptikaKargin
             this.button2.TabIndex = 1;
             this.button2.Text = "Импорт";
             this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label1
             // 
@@ -70,7 +71,7 @@ namespace OptikaKargin
             this.label1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.label1.Location = new System.Drawing.Point(76, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(383, 44);
+            this.label1.Size = new System.Drawing.Size(382, 44);
             this.label1.TabIndex = 2;
             this.label1.Text = "Восстановление данных";
             // 
@@ -82,7 +83,7 @@ namespace OptikaKargin
             this.label2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.label2.Location = new System.Drawing.Point(76, 151);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(395, 44);
+            this.label2.Size = new System.Drawing.Size(394, 44);
             this.label2.TabIndex = 3;
             this.label2.Text = "Имортирование данных";
             // 
@@ -112,7 +113,6 @@ namespace OptikaKargin
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(207, 39);
             this.comboBox1.TabIndex = 6;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // button4
             // 
@@ -122,7 +122,7 @@ namespace OptikaKargin
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(183, 48);
             this.button4.TabIndex = 7;
-            this.button4.Text = "Выход";
+            this.button4.Text = "Назад";
             this.button4.UseVisualStyleBackColor = false;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 

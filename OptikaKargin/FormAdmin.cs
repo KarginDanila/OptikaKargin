@@ -108,7 +108,7 @@ namespace OptikaKargin
 
         private void button2_Click(object sender, EventArgs e)
         {
-            RecoveryAndImport form = new RecoveryAndImport(); // Создаем форму ролей
+            RecoveryAdmin form = new RecoveryAdmin(); // Создаем форму ролей
             form.Show();
             Hide();// Открываем форму в модальном режиме
         }

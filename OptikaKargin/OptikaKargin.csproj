@@ -41,8 +41,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="MySql.Data">
-      <HintPath>..\..\..\..\Kargin ИС-21Б\11.01\ПР30 CAPTCHA\PR_28Kargin\PR_28Kargin\bin\Debug\MySql.Data.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\Итог\Курсовая\OptikaKargin\OptikaKargin\bin\Debug\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -216,12 +215,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecoveryAndImport.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RecoveryAndImport.Designer.cs">
-      <DependentUpon>RecoveryAndImport.cs</DependentUpon>
-    </Compile>
     <Compile Include="RecoveryAdmin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -317,9 +310,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="RecoveryAndImport.resx">
-      <DependentUpon>RecoveryAndImport.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="RecoveryAdmin.resx">
       <DependentUpon>RecoveryAdmin.cs</DependentUpon>
     </EmbeddedResource>
