@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using System.Drawing.Drawing2D;
 using System.Drawing;
+using System.Threading;
 
 namespace OptikaKargin
 {
@@ -220,6 +221,29 @@ namespace OptikaKargin
         private void button3_Click(object sender, EventArgs e)
         {
             CaptchaTo();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (textBox3.Text == captchaText)
+            {
+                MessageBox.Show("Вы успешно ввели CAPTCHA");
+                button1.Enabled = true;
+                pictureBox1.Enabled = true;
+                button1.Enabled = true;
+                textBoxLogin.Enabled = true;
+                textBoxPassword.Enabled = true;
+                textBoxPassword.Text = null;
+                this.Width = 308;
+            }
+            else
+            {
+                MessageBox.Show("Неверный ввод, блокировка системы на 10 секунд");
+                button2.Enabled = false;
+                Thread.Sleep(10000);
+                button2.Enabled = true;
+                Captha();
+            }
         }
     }
 }
