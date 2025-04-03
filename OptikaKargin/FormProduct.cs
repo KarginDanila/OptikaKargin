@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
@@ -18,13 +19,22 @@ namespace OptikaKargin
         public FormProduct()
         {
             InitializeComponent();
+
+            // Подписка на события кнопок
+            button1.Click += PrevButton_Click;
+            button2.Click += NextButton_Click;
         }
 
         // Строка подключения к базе данных
         string con = Connection.myConnection;
 
+        // Настройки пагинации
+        private int currentPage = 1;
+        private int pageSize = 5;
+        private int totalPages = 1;
         // Список товаров
         private List<Products> products = new List<Products>();
+        private List<Products> filteredProducts = new List<Products>();
 
         // Текст-заполнитель для поля поиска
         private const string PlaceholderText = "Поиск";
@@ -39,6 +49,7 @@ namespace OptikaKargin
             InitializeSearchBox();      // Настройка поля поиска
             InitializeComboBoxes();     // Настройка выпадающих списков
             LoadCategories();           // Загрузка категорий для фильтрации
+            UpdatePagination();
         }
 
         /// <summary>
@@ -118,7 +129,6 @@ namespace OptikaKargin
             using (MySqlConnection connection = new MySqlConnection(con))
             {
                 connection.Open();
-                // SQL-запрос для получения товаров с информацией о категориях и поставщиках
                 string query = @"SELECT 
                     p.ProductArticle AS Article,
                     p.ProductName AS Name,
@@ -138,11 +148,9 @@ namespace OptikaKargin
 
                 while (reader.Read())
                 {
-                    // Загрузка изображения товара
                     string imagePath = reader["ProductPhoto"].ToString();
                     Image image = LoadProductImage(imagePath);
 
-                    // Проверка на NULL значений из БД
                     if (reader["Article"] != DBNull.Value &&
                         reader["Name"] != DBNull.Value &&
                         reader["Description"] != DBNull.Value &&
@@ -150,7 +158,6 @@ namespace OptikaKargin
                         reader["Stock"] != DBNull.Value &&
                         reader["Discount"] != DBNull.Value)
                     {
-                        // Формирование объекта товара
                         string article = reader["Article"].ToString();
                         string name = reader["Name"].ToString();
                         string description = reader["Description"].ToString();
@@ -161,7 +168,6 @@ namespace OptikaKargin
                         string category = reader["CategoryName"]?.ToString() ?? "Не указана";
                         string supplier = reader["SupplierName"]?.ToString() ?? "Не указан";
 
-                        // Добавление товара в список
                         products.Add(new Products
                         {
                             Article = article,
@@ -180,9 +186,10 @@ namespace OptikaKargin
                 reader.Close();
             }
 
-            // Привязка списка товаров к таблице
-            dataGridView1.DataSource = products;
+            filteredProducts = new List<Products>(products);
+            UpdatePagination();
         }
+
 
         /// <summary>
         /// Загрузка изображения товара
@@ -314,7 +321,49 @@ namespace OptikaKargin
         {
             ApplyFilterAndSort();
         }
+        private void UpdatePagination()
+        {
+            // Рассчитываем общее количество страниц
+            totalPages = (int)Math.Ceiling((double)filteredProducts.Count / pageSize);
 
+            // Обновляем состояние кнопок навигации
+            button1.Enabled = currentPage > 1;
+            button2.Enabled = currentPage < totalPages;
+
+            // Обновляем Label с информацией о странице
+            label1.Text = $"Страница {currentPage} из {totalPages}";
+
+            // Обновляем отображаемые данные
+            DisplayCurrentPage();
+        }
+        private void DisplayCurrentPage()
+        {
+            var pagedProducts = filteredProducts
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            dataGridView1.DataSource = pagedProducts;
+        }
+
+        private void GoToPage(int pageNumber)
+        {
+            if (pageNumber >= 1 && pageNumber <= totalPages)
+            {
+                currentPage = pageNumber;
+                UpdatePagination();
+            }
+        }
+
+        private void PrevButton_Click(object sender, EventArgs e)
+        {
+            GoToPage(currentPage - 1);
+        }
+
+        private void NextButton_Click(object sender, EventArgs e)
+        {
+            GoToPage(currentPage + 1);
+        }
         /// <summary>
         /// Применение фильтров и сортировки к списку товаров
         /// </summary>
@@ -322,15 +371,14 @@ namespace OptikaKargin
         {
             string searchText = textBoxPoick.Text.ToLower();
 
-            // Игнорируем текст-заполнитель
-            if (searchText == "поиск")
+            if (searchText == PlaceholderText.ToLower())
             {
                 searchText = "";
             }
 
             string selectedCategory = comboBoxFiltr.SelectedItem?.ToString();
 
-            var filteredProducts = products;
+            filteredProducts = products;
 
             // Фильтрация по поисковому запросу
             if (!string.IsNullOrWhiteSpace(searchText))
@@ -341,7 +389,7 @@ namespace OptikaKargin
             }
 
             // Фильтрация по категории
-            if (selectedCategory != "Все категории")
+            if (selectedCategory != null && selectedCategory != "Все категории")
             {
                 filteredProducts = filteredProducts
                     .Where(p => p.CategoryName == selectedCategory)
@@ -362,8 +410,9 @@ namespace OptikaKargin
                     .ToList();
             }
 
-            // Обновление таблицы
-            dataGridView1.DataSource = filteredProducts;
+            // Сбрасываем на первую страницу и обновляем пагинацию
+            currentPage = 1;
+            UpdatePagination();
         }
 
         /// <summary>

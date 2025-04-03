@@ -123,11 +123,7 @@ namespace OptikaKargin
             textBox3.Visible = true;
             button1.Enabled = false;
             pictureBox1.Enabled = false;
-            textBoxLogin.Enabled = false;
-            textBoxPassword.Enabled = false;
-            textBoxLogin.Text = null;
-            textBoxPassword.Text = null;
-            this.Width = 642;
+            this.Width = 550;
         }
         private void CaptchaTo()
         {
@@ -221,6 +217,7 @@ namespace OptikaKargin
         private void button3_Click(object sender, EventArgs e)
         {
             CaptchaTo();
+            textBox3.Clear();
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -233,7 +230,6 @@ namespace OptikaKargin
                 button1.Enabled = true;
                 textBoxLogin.Enabled = true;
                 textBoxPassword.Enabled = true;
-                textBoxPassword.Text = null;
                 this.Width = 308;
             }
             else
@@ -242,6 +238,7 @@ namespace OptikaKargin
                 button2.Enabled = false;
                 Thread.Sleep(10000);
                 button2.Enabled = true;
+                textBox3.Clear();
                 Captha();
             }
         }

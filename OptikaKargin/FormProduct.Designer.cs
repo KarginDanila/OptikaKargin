@@ -37,6 +37,9 @@
             this.comboBoxFiltr = new System.Windows.Forms.ComboBox();
             this.comboBoxSort = new System.Windows.Forms.ComboBox();
             this.textBoxPoick = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -105,7 +108,7 @@
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowTemplate.Height = 67;
-            this.dataGridView1.Size = new System.Drawing.Size(995, 452);
+            this.dataGridView1.Size = new System.Drawing.Size(995, 407);
             this.dataGridView1.TabIndex = 4;
             // 
             // comboBoxFiltr
@@ -145,6 +148,34 @@
             this.textBoxPoick.TabIndex = 7;
             this.textBoxPoick.TextChanged += new System.EventHandler(this.textBoxPoick_TextChanged_1);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe Script", 14.25F, System.Drawing.FontStyle.Bold);
+            this.label1.Location = new System.Drawing.Point(151, 555);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(77, 31);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "label1";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(6, 488);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(48, 30);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "<";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(60, 488);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(48, 30);
+            this.button2.TabIndex = 10;
+            this.button2.Text = ">";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
             // FormProduct
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 23F);
@@ -152,6 +183,9 @@
             this.BackgroundImage = global::OptikaKargin.Properties.Resources._123;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1016, 604);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxPoick);
             this.Controls.Add(this.comboBoxSort);
             this.Controls.Add(this.comboBoxFiltr);
@@ -184,5 +218,8 @@
         private System.Windows.Forms.ComboBox comboBoxFiltr;
         private System.Windows.Forms.ComboBox comboBoxSort;
         private System.Windows.Forms.TextBox textBoxPoick;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }
