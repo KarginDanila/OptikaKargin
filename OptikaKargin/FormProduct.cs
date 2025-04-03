@@ -50,6 +50,7 @@ namespace OptikaKargin
             InitializeComboBoxes();     // Настройка выпадающих списков
             LoadCategories();           // Загрузка категорий для фильтрации
             UpdatePagination();
+            UpdateRecordsCount();
         }
 
         /// <summary>
@@ -236,36 +237,6 @@ namespace OptikaKargin
             // Обновление списка товаров после закрытия формы добавления
             LoadProductsFromDatabase();
         }
-
-        /// <summary>
-        /// Обработчик изменения текста в поле поиска
-        /// </summary>
-        private void textBoxPoick_TextChanged_1(object sender, EventArgs e)
-        {
-            string searchText = textBoxPoick.Text.Trim();
-
-            // Игнорируем текст-заполнитель
-            if (searchText == PlaceholderText)
-            {
-                dataGridView1.DataSource = products;
-                return;
-            }
-
-            // Поиск при вводе от 3 символов
-            if (searchText.Length >= 3)
-            {
-                var filteredProducts = products
-                    .Where(p => p.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
-                    .ToList();
-
-                dataGridView1.DataSource = filteredProducts;
-            }
-            else
-            {
-                dataGridView1.DataSource = products;
-            }
-        }
-
         /// <summary>
         /// Обработчик получения фокуса полем поиска
         /// </summary>
@@ -321,6 +292,17 @@ namespace OptikaKargin
         {
             ApplyFilterAndSort();
         }
+        private void UpdateRecordsCount()
+        {
+            int totalRecords = products.Count; // Общее количество записей в базе
+            int filteredRecords = filteredProducts.Count; // Количество записей после фильтрации
+            int displayedRecords = Math.Min(pageSize, filteredRecords - (currentPage - 1) * pageSize); // Количество записей на текущей странице
+
+            // Обновляем Label с информацией о записях
+            label2.Text = $"Показано: {displayedRecords} из {filteredRecords} (всего: {totalRecords})";
+        }
+
+        // Модифицируем метод UpdatePagination
         private void UpdatePagination()
         {
             // Рассчитываем общее количество страниц
@@ -335,6 +317,9 @@ namespace OptikaKargin
 
             // Обновляем отображаемые данные
             DisplayCurrentPage();
+
+            // Обновляем информацию о количестве записей
+            UpdateRecordsCount();
         }
         private void DisplayCurrentPage()
         {
@@ -363,6 +348,39 @@ namespace OptikaKargin
         private void NextButton_Click(object sender, EventArgs e)
         {
             GoToPage(currentPage + 1);
+        }
+        /// <summary>
+        /// Обработчик изменения текста в поле поиска
+        /// </summary>
+        private void textBoxPoick_TextChanged_1(object sender, EventArgs e)
+        {
+            string searchText = textBoxPoick.Text.Trim();
+
+            // Игнорируем текст-заполнитель
+            if (searchText == PlaceholderText)
+            {
+                filteredProducts = new List<Products>(products);
+                dataGridView1.DataSource = filteredProducts;
+                UpdatePagination();
+                return;
+            }
+
+            // Поиск при вводе от 3 символов
+            if (searchText.Length >= 3)
+            {
+                filteredProducts = products
+                    .Where(p => p.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                    .ToList();
+
+                dataGridView1.DataSource = filteredProducts;
+                UpdatePagination();
+            }
+            else
+            {
+                filteredProducts = new List<Products>(products);
+                dataGridView1.DataSource = filteredProducts;
+                UpdatePagination();
+            }
         }
         /// <summary>
         /// Применение фильтров и сортировки к списку товаров
@@ -414,6 +432,7 @@ namespace OptikaKargin
             currentPage = 1;
             UpdatePagination();
         }
+
 
         /// <summary>
         /// Загрузка категорий для фильтрации
