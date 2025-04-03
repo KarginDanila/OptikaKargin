@@ -23,11 +23,12 @@ namespace OptikaKargin
             // Подписка на события кнопок
             button1.Click += PrevButton_Click;
             button2.Click += NextButton_Click;
+
         }
 
         // Строка подключения к базе данных
         string con = Connection.myConnection;
-
+        private const int MinStockThreshold = 5;
         // Настройки пагинации
         private int currentPage = 1;
         private int pageSize = 5;
@@ -65,6 +66,7 @@ namespace OptikaKargin
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.AutoGenerateColumns = false;
+            dataGridView1.RowPrePaint += DataGridView1_RowPrePaint;
 
             // Очистка существующих колонок
             dataGridView1.Columns.Clear();
@@ -95,7 +97,38 @@ namespace OptikaKargin
                 column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             }
         }
+        private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.RowIndex >= dataGridView1.Rows.Count)
+                return;
 
+            var row = dataGridView1.Rows[e.RowIndex];
+            var product = row.DataBoundItem as Products;
+
+            if (product != null)
+            {
+                // Сброс стилей к значениям по умолчанию
+                row.DefaultCellStyle.BackColor = dataGridView1.DefaultCellStyle.BackColor;
+                row.DefaultCellStyle.ForeColor = dataGridView1.DefaultCellStyle.ForeColor;
+
+                // Подсветка товаров с низким запасом
+                if (product.Stock < MinStockThreshold)
+                {
+                    row.DefaultCellStyle.BackColor = Color.LightCoral;
+                }
+                // Подсветка товаров с большой скидкой
+                else if (product.Discount > 20)
+                {
+                    row.DefaultCellStyle.BackColor = Color.LightGreen;
+                }
+                // Подсветка отсутствующих товаров
+                else if (product.Stock == 0)
+                {
+                    row.DefaultCellStyle.BackColor = Color.LightGray;
+                    row.DefaultCellStyle.ForeColor = Color.DarkRed;
+                }
+            }
+        }
         /// <summary>
         /// Инициализация поля поиска
         /// </summary>
@@ -329,8 +362,10 @@ namespace OptikaKargin
                 .ToList();
 
             dataGridView1.DataSource = pagedProducts;
-        }
 
+            // Принудительно обновляем форматирование
+            dataGridView1.Refresh();
+        }
         private void GoToPage(int pageNumber)
         {
             if (pageNumber >= 1 && pageNumber <= totalPages)
