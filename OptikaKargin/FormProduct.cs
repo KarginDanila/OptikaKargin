@@ -53,7 +53,6 @@ namespace OptikaKargin
             UpdatePagination();
             UpdateRecordsCount();
         }
-
         /// <summary>
         /// Инициализация DataGridView (таблицы товаров)
         /// </summary>

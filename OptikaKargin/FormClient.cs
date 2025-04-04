@@ -6,9 +6,11 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using MySql.Data.MySqlClient;
 
 namespace OptikaKargin
@@ -116,12 +118,11 @@ namespace OptikaKargin
         /// </summary>
         private void LoadClientFromDatabase()
         {
-            clients.Clear(); // Очистка списка клиентов
+            clients.Clear();
 
             using (MySqlConnection connection = new MySqlConnection(con))
             {
                 connection.Open();
-                // SQL-запрос для получения данных о клиентах
                 string query = @"SELECT 
                     ClientId AS Id,
                     ClientName AS Name,
@@ -135,10 +136,8 @@ namespace OptikaKargin
                 MySqlCommand command = new MySqlCommand(query, connection);
                 MySqlDataReader reader = command.ExecuteReader();
 
-                // Чтение данных
                 while (reader.Read())
                 {
-                    // Проверка на NULL значения
                     if (reader["Id"] != DBNull.Value &&
                         reader["Name"] != DBNull.Value &&
                         reader["Surname"] != DBNull.Value &&
@@ -147,16 +146,35 @@ namespace OptikaKargin
                         reader["Address"] != DBNull.Value &&
                         reader["Phone"] != DBNull.Value)
                     {
-                        // Добавление клиента в список
+                        // Скрытие персональных данных
+                        string name = reader["Name"].ToString();
+                        string surname = reader["Surname"].ToString();
+                        string patronymic = reader["Patronymic"].ToString();
+                        string email = reader["Email"].ToString();
+                        string address = reader["Address"].ToString();
+                        string phone = reader["Phone"].ToString();
+
+                        // Скрытие последних символов
+                        if (name.Length > 2)
+                            name = name.Substring(0, name.Length - 2) + new string('*', 2);
+                        if (surname.Length > 3)
+                            surname = surname.Substring(0, surname.Length - 3) + new string('*', 3);
+                        if (patronymic.Length > 3)
+                            patronymic = patronymic.Substring(0, patronymic.Length - 3) + new string('*', 3);
+                        if (phone.Length > 5)
+                            phone = phone.Substring(0, phone.Length - 5) + new string('*', 5);
+                        if (address.Length > 5)
+                            address = address.Substring(0, address.Length - 5) + new string('*', 5);
+
                         clients.Add(new Client
                         {
                             Id = Convert.ToInt32(reader["Id"]),
-                            Name = reader["Name"].ToString(),
-                            Surname = reader["Surname"].ToString(),
-                            Patronymic = reader["Patronymic"].ToString(),
-                            Email = reader["Email"].ToString(),
-                            Address = reader["Address"].ToString(),
-                            Phone = reader["Phone"].ToString()
+                            Name = name,
+                            Surname = surname,
+                            Patronymic = patronymic,
+                            Email = email, // Почта не скрывается
+                            Address = address,
+                            Phone = phone
                         });
                     }
                 }
