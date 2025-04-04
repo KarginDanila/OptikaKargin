@@ -117,7 +117,7 @@ namespace OptikaKargin
                     row.DefaultCellStyle.BackColor = Color.LightCoral;
                 }
                 // Подсветка товаров с большой скидкой
-                else if (product.Discount > 20)
+                else if (product.Discount >= 20)
                 {
                     row.DefaultCellStyle.BackColor = Color.LightGreen;
                 }
@@ -585,6 +585,11 @@ namespace OptikaKargin
             {
                 MessageBox.Show("Пожалуйста, выберите продукт для редактирования.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 
