@@ -124,14 +124,14 @@ namespace OptikaKargin
             {
                 connection.Open();
                 string query = @"SELECT 
-                    ClientId AS Id,
-                    ClientName AS Name,
-                    ClientSurname AS Surname,
-                    ClientPatronymic AS Patronymic,
-                    ClientEmail AS Email,
-                    ClientAddress AS Address,
-                    ClientPhone AS Phone
-                FROM client";
+            ClientId AS Id,
+            ClientName AS Name,
+            ClientSurname AS Surname,
+            ClientPatronymic AS Patronymic,
+            ClientEmail AS Email,
+            ClientAddress AS Address,
+            ClientPhone AS Phone
+        FROM client";
 
                 MySqlCommand command = new MySqlCommand(query, connection);
                 MySqlDataReader reader = command.ExecuteReader();
@@ -146,15 +146,23 @@ namespace OptikaKargin
                         reader["Address"] != DBNull.Value &&
                         reader["Phone"] != DBNull.Value)
                     {
-                        // Скрытие персональных данных
-                        string name = reader["Name"].ToString();
-                        string surname = reader["Surname"].ToString();
-                        string patronymic = reader["Patronymic"].ToString();
-                        string email = reader["Email"].ToString();
-                        string address = reader["Address"].ToString();
-                        string phone = reader["Phone"].ToString();
+                        // Store original unmasked data
+                        string originalName = reader["Name"].ToString();
+                        string originalSurname = reader["Surname"].ToString();
+                        string originalPatronymic = reader["Patronymic"].ToString();
+                        string originalEmail = reader["Email"].ToString();
+                        string originalAddress = reader["Address"].ToString();
+                        string originalPhone = reader["Phone"].ToString();
 
-                        // Скрытие последних символов
+                        // Create masked versions for display in grid
+                        string name = originalName;
+                        string surname = originalSurname;
+                        string patronymic = originalPatronymic;
+                        string email = originalEmail;
+                        string address = originalAddress;
+                        string phone = originalPhone;
+
+                        // Apply masking if needed (optional)
                         if (name.Length > 2)
                             name = name.Substring(0, name.Length - 2) + new string('*', 2);
                         if (surname.Length > 3)
@@ -169,12 +177,18 @@ namespace OptikaKargin
                         clients.Add(new Client
                         {
                             Id = Convert.ToInt32(reader["Id"]),
-                            Name = name,
-                            Surname = surname,
-                            Patronymic = patronymic,
-                            Email = email, // Почта не скрывается
-                            Address = address,
-                            Phone = phone
+                            Name = name,               
+                            Surname = surname,         
+                            Patronymic = patronymic,    
+                            Email = email,              
+                            Address = address,         
+                            Phone = phone,             
+                            OriginalName = originalName,
+                            OriginalSurname = originalSurname,
+                            OriginalPatronymic = originalPatronymic,
+                            OriginalEmail = originalEmail,
+                            OriginalAddress = originalAddress,
+                            OriginalPhone = originalPhone
                         });
                     }
                 }
@@ -282,6 +296,15 @@ namespace OptikaKargin
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                Client selectedClient = (Client)dataGridView1.SelectedRows[0].DataBoundItem;
+                FormClientDetails detailsForm = new FormClientDetails(selectedClient);
+                detailsForm.ShowDialog();
+            }
+        }
     }
 
     /// <summary>
@@ -296,5 +319,12 @@ namespace OptikaKargin
         public string Email { get; set; } // Электронная почта
         public string Address { get; set; } // Адрес
         public string Phone { get; set; } // Телефон
+        public string OriginalName { get; set; }
+        public string OriginalSurname { get; set; }
+        public string OriginalPatronymic { get; set; }
+        public string OriginalEmail { get; set; }
+        public string OriginalAddress { get; set; }
+        public string OriginalPhone { get; set; }
     }
+
 }
