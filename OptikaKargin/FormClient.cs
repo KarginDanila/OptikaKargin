@@ -146,7 +146,6 @@ namespace OptikaKargin
                         reader["Address"] != DBNull.Value &&
                         reader["Phone"] != DBNull.Value)
                     {
-                        // Store original unmasked data
                         string originalName = reader["Name"].ToString();
                         string originalSurname = reader["Surname"].ToString();
                         string originalPatronymic = reader["Patronymic"].ToString();
@@ -154,7 +153,6 @@ namespace OptikaKargin
                         string originalAddress = reader["Address"].ToString();
                         string originalPhone = reader["Phone"].ToString();
 
-                        // Create masked versions for display in grid
                         string name = originalName;
                         string surname = originalSurname;
                         string patronymic = originalPatronymic;
@@ -162,7 +160,6 @@ namespace OptikaKargin
                         string address = originalAddress;
                         string phone = originalPhone;
 
-                        // Apply masking if needed (optional)
                         if (name.Length > 2)
                             name = name.Substring(0, name.Length - 2) + new string('*', 2);
                         if (surname.Length > 3)
