@@ -25,7 +25,7 @@ namespace OptikaKargin
             button2.Click += NextButton_Click;
 
         }
-
+        
         // Строка подключения к базе данных
         string con = Connection.myConnection;
         private const int MinStockThreshold = 5;
@@ -584,11 +584,6 @@ namespace OptikaKargin
             {
                 MessageBox.Show("Пожалуйста, выберите продукт для редактирования.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
         }
     }
 

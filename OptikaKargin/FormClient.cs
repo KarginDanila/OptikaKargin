@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net;
@@ -23,8 +24,31 @@ namespace OptikaKargin
         public FormClient()
         {
             InitializeComponent();
-        }
+            _inactivityTimer = new Timer { Interval = 1000 }; // Проверка каждую секунду
+            _inactivityTimer.Tick += InactivityTimer_Tick;
+            _lastActivityTime = DateTime.Now;
+            _inactivityTimer.Start();
 
+            // Подписка на события активности
+            this.MouseMove += (s, e) => ResetInactivityTimer();
+            this.KeyDown += (s, e) => ResetInactivityTimer();
+
+            // Подписка для всех контролов на форме
+            foreach (Control control in this.Controls)
+            {
+                control.MouseMove += (s, e) => ResetInactivityTimer();
+                control.Click += (s, e) => ResetInactivityTimer();
+            }
+
+            this.ControlAdded += (s, e) =>
+            {
+                e.Control.MouseMove += (s2, e2) => ResetInactivityTimer();
+                e.Control.Click += (s2, e2) => ResetInactivityTimer();
+            };
+        }
+        private Timer _inactivityTimer;
+        private DateTime _lastActivityTime;
+        private int InactivityTimeout = Properties.Settings.Default.timeout; // 30 секунд
         private string con = Connection.myConnection; // Строка подключения к БД
         private List<Client> clients = new List<Client>(); // Список клиентов
         private const string PlaceholderText = "Поиск"; // Текст-заполнитель для поля поиска
@@ -36,7 +60,93 @@ namespace OptikaKargin
         {
             this.Close();
         }
+        private void ResetInactivityTimer()
+        {
+            _lastActivityTime = DateTime.Now;
+        }
 
+        private void InactivityTimer_Tick(object sender, EventArgs e)
+        {
+            if ((DateTime.Now - _lastActivityTime).TotalSeconds >= InactivityTimeout)
+            {
+                _inactivityTimer.Stop();
+                LockApplication();
+            }
+        }
+
+        private void LockApplication()
+        {
+            try
+            {
+                // Показываем сообщение о блокировке
+                MessageBox.Show("Система заблокирована из-за неактивности. Пожалуйста, авторизуйтесь снова.",
+                              "Блокировка",
+                              MessageBoxButtons.OK,
+                              MessageBoxIcon.Warning);
+
+                // Закрываем текущую форму безопасным способом
+                if (this.IsHandleCreated)
+                {
+                    if (this.InvokeRequired)
+                        this.Invoke(new Action(() => this.Close()));
+                    else
+                        this.Close();
+                }
+                else
+                {
+                    this.Close();
+                }
+
+                // Закрываем все другие открытые формы
+                var formsToClose = Application.OpenForms.Cast<Form>()
+                                     .Where(f => !(f is Avtorization) && f != this)
+                                     .ToList();
+
+                foreach (var form in formsToClose)
+                {
+                    try
+                    {
+                        if (form.IsHandleCreated)
+                        {
+                            if (form.InvokeRequired)
+                                form.Invoke(new Action(() => form.Close()));
+                            else
+                                form.Close();
+                        }
+                        else
+                        {
+                            form.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Логируем ошибку, если нужно
+                        Debug.WriteLine($"Ошибка при закрытии формы: {ex.Message}");
+                    }
+                }
+
+                // Показываем форму авторизации
+                using (var authForm = new Avtorization())
+                {
+                    var result = authForm.ShowDialog();
+
+                    if (result == DialogResult.OK)
+                    {
+                        // Создаем новую форму клиентов
+                        new FormClient().Show();
+                    }
+                    else
+                    {
+                        Application.Exit();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // В случае критической ошибки принудительно завершаем приложение
+                Environment.Exit(1);
+            }
+        }
         /// <summary>
         /// Обработчик загрузки формы
         /// </summary>
@@ -65,14 +175,14 @@ namespace OptikaKargin
             // Добавление столбцов в DataGridView
             dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
             {
-                HeaderText = "Имя",
-                DataPropertyName = "Name",
+                HeaderText = "Фамилия",
+                DataPropertyName = "Surname",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             });
             dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
             {
-                HeaderText = "Фамилия",
-                DataPropertyName = "Surname",
+                HeaderText = "Имя",
+                DataPropertyName = "Name",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             });
             dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
@@ -162,8 +272,6 @@ namespace OptikaKargin
 
                         if (name.Length > 2)
                             name = name.Substring(0, name.Length - 2) + new string('*', 2);
-                        if (surname.Length > 3)
-                            surname = surname.Substring(0, surname.Length - 3) + new string('*', 3);
                         if (patronymic.Length > 3)
                             patronymic = patronymic.Substring(0, patronymic.Length - 3) + new string('*', 3);
                         if (phone.Length > 5)
@@ -258,7 +366,7 @@ namespace OptikaKargin
             }
 
             var filteredClients = clients
-                .Where(c => c.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                .Where(c => c.Surname.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                 .ToList();
 
             UpdateDataGridView(filteredClients);

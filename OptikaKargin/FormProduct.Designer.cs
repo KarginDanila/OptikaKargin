@@ -202,7 +202,6 @@
             this.label3.Size = new System.Drawing.Size(241, 23);
             this.label3.TabIndex = 12;
             this.label3.Text = "- количество товара меньше 5";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // pictureBox1
             // 
